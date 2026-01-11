@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake Game</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Arial, sans-serif;
+}
+body{
+  background:#0f172a;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:#fff;
+  background-image: url(saniya.jpg);
+  background-size: 650px;
+}
+h1 {
+    text-emphasis-color: inherit;
+    border:20px solid #e60814;
+    border-radius:10px;
+    background-image: url(screenshot_2026_0110_204950.jpg);
+    background-size: 100px;
+}
+h2 {
+  color: hwb(90 95% 5%);
+  border:10px solid #479e92;
+  border-radius:10px;
+  background-image: url(kk.jpg);
+  background-size: 20px;
+}
+.game-container{
+  text-align:center;
+}
+canvas{
+  background:#020617;
+  border:3px solid #479e67;
+  border-radius:10px;
+  background-image: url(image.jpg);
+  background-size: 300px;
+}
+.score{
+  margin:10px 0;
+  font-size:20px;
+}
+.controls{
+  margin-top:15px;
+}
+.controls button{
+  padding:10px 20px;
+  margin:5px;
+  font-size:18px;
+  border:none;
+  border-radius:8px;
+  background:#22c55e;
+  color:#000;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+<div class="game-container">
+  <h1>Somiya jahan</h1>
+  <h2>🐍 Snake Game</h2>
+  <div class="score">Score: <span id="score">0</span></div>
+  <canvas id="game" width="300" height="300"></canvas>
+
+  <!-- Mobile Controls -->
+  <div class="controls">
+    <div>
+      <button onclick="changeDir('up')">⬆️</button>
+    </div>
+    <div>
+      <button onclick="changeDir('left')">⬅️</button>
+      <button onclick="changeDir('down')">⬇️</button>
+      <button onclick="changeDir('right')">➡️</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const box = 10;
+let snake = [{x: 150, y: 150}];
+let direction = "right";
+let food = randomFood();
+let score = 0;
+
+function randomFood(){
+  return {
+    x: Math.floor(Math.random()*20)*box,
+    y: Math.floor(Math.random()*20)*box
+  };
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // Snake
+  snake.forEach((s,i)=>{
+    ctx.fillStyle = i==0 ? "#22c55e" : "#4ade80";
+    ctx.fillRect(s.x,s.y,box,box);
+  });
+
+  // Food
+  ctx.fillStyle = "#ef4444";
+  ctx.fillRect(food.x,food.y,box,box);
+
+  // Move
+  let head = {x: snake[0].x, y: snake[0].y};
+
+  if(direction=="right") head.x += box;
+  if(direction=="left") head.x -= box;
+  if(direction=="up") head.y -= box;
+  if(direction=="down") head.y += box;
+
+  // Eat
+  if(head.x==food.x && head.y==food.y){
+    score++;
+    document.getElementById("score").innerText = score;
+    food = randomFood();
+  } else {
+    snake.pop();
+  }
+
+  // Game Over
+  if(
+    head.x<0 || head.y<0 ||
+    head.x>=canvas.width || head.y>=canvas.height ||
+    snake.some(s=>s.x==head.x && s.y==head.y)
+  ){
+    alert("Game Over! Score: "+score);
+    location.reload();
+  }
+
+  snake.unshift(head);
+}
+
+function changeDir(dir){
+  direction = dir;
+}
+
+document.addEventListener("keydown", e=>{
+  if(e.key=="ArrowUp") direction="up";
+  if(e.key=="ArrowDown") direction="down";
+  if(e.key=="ArrowLeft") direction="left";
+  if(e.key=="ArrowRight") direction="right";
+});
+
+setInterval(draw,120);
+</script>
+</body>
+</html>
